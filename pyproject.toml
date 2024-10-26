@@ -1,0 +1,34 @@
+[tool.poetry]
+name = "python-template"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+
+[tool.poetry.dependencies]
+python = ">=3.10.0,<3.12"
+django-plans-payments = "^1.4.1"
+fastapi = "^0.115.3"
+finance = "^0.2502"
+uvicorn = "^0.32.0"
+apscheduler = "^3.10.4"
+sqlalchemy = "^2.0.29"
+pydantic = "^2.7.0"
+pydantic-core = "^2.18.1"
+pydantic-settings = "^2.4.0"
+# psycopg2 = "^2.9.9"
+# email-validator
+# pydantic[email] = 
+
+[tool.pyright]
+# https://github.com/microsoft/pyright/blob/main/docs/configuration.md
+useLibraryCodeForTypes = true
+exclude = [".cache"]
+
+[tool.ruff]
+# https://beta.ruff.rs/docs/configuration/
+select = ['E', 'W', 'F', 'I', 'B', 'C4', 'ARG', 'SIM']
+ignore = ['W291', 'W292', 'W293']
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

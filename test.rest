@@ -1,0 +1,61 @@
+# @url = https://eaf31510-b759-4e3e-ae9f-7476383f4078-00-1re1y04gi1054.kirk.replit.dev
+@url = http://localhost:8000
+#####
+GET {{url}}/ping?message=oi
+Api-Key: teste123
+Content-Type: application/json
+
+{
+
+}
+
+#####
+POST {{url}}/profile/user
+Api-Key: teste123
+Content-Type: application/json
+
+{
+    "uuid": "e8bfb9c3-10ac-43ab-9cf6-73178185291"
+}
+
+#####
+POST {{url}}/journey/list
+Api-Key: teste123
+Content-Type: application/json
+
+#####
+POST {{url}}/journey/activities
+Api-Key: teste123
+Content-Type: application/json
+
+{
+    "uuid": "867681a7-2267-4c85-8b08-53b1446f9e58"
+}
+#####
+POST {{url}}/journey/quiz
+Api-Key: teste123
+Content-Type: application/json
+
+{
+    "uuid": "867681a7-2267-4c85-8b08-53b1446f9e58"
+}
+#####
+POST {{url}}/profiles/docs
+Api-Key: teste123
+Content-Type: application/json
+
+{
+    "name": "John",
+    "country": "Brazil",
+    "email": "john@example.com"
+}
+#####
+GET {{url}}/docs
+Api-Key: teste123
+Content-Type: application/json
+
+{
+    "name": "John",
+    "country": "Brazil",
+    "email": "john@example.com"
+}
