@@ -1,5 +1,5 @@
 # @url = https://eaf31510-b759-4e3e-ae9f-7476383f4078-00-1re1y04gi1054.kirk.replit.dev
-@url = http://localhost:8000
+@url = http://127.0.0.1:8000
 #####
 GET {{url}}/ping?message=oi
 Api-Key: teste123
@@ -10,12 +10,42 @@ Content-Type: application/json
 }
 
 #####
-POST {{url}}/profile/user
+POST {{url}}/profile/user/create
 Api-Key: teste123
 Content-Type: application/json
 
 {
-    "uuid": "e8bfb9c3-10ac-43ab-9cf6-73178185291"
+    "name": "Test Delete",
+    "country": "USA",
+    "email": "alice2@example.com"
+}
+
+#####
+GET {{url}}/profile/user/a618c407-d897-408f-b89c-fc01eb5e31b6
+Api-Key: teste123
+Content-Type: application/json
+
+{
+
+}
+#####
+PUT {{url}}/profile/user/f91eed13-bb74-4863-af56-dd779040464b
+Api-Key: teste123
+Content-Type: application/json
+
+{
+    "name": "Alice Muniz",
+    "country": "USA",
+    "email": "alice@example.com"
+}
+
+#####
+DELETE  {{url}}/profile/user/a618c407-d897-408f-b89c-fc01eb5e31b6
+Api-Key: teste123
+Content-Type: application/json
+
+{
+
 }
 
 #####

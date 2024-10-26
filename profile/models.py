@@ -10,3 +10,5 @@ class Profile(Base):
     name = Column(String(255), nullable=False)
     country = Column(String(100))
     email = Column(String(255), nullable=False, unique=True)
+
+

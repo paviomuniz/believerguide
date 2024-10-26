@@ -9,14 +9,24 @@ import os
 from typing import List
 # import re
 import uvicorn
-from profile import user, crud, schemas  # , models
 from pydantic import BaseModel
 from fastapi import FastAPI, Depends, HTTPException  # , Header, responses, APIRouter, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
+from profile import crud, schemas  # , models, user
 from services.scheduler import scheduler
 from util.dependencies import verify_api_key, ResponseItem
 from util.database import SessionLocal, engine, Base
+from journey.models import Journey, Activity
+from journey.crud import create_journey, get_journey, update_journey, delete_journey
+from journey.schemas import (
+    JourneyCreate,
+    JourneyBase,
+    Journey,
+    Activity,
+    ActivityBase,
+    ActivityCreate,
+)
 
 # Criar as tabelas no banco de dados
 Base.metadata.create_all(bind=engine)
@@ -33,6 +43,7 @@ def get_db():
 
 origins = [
     "http://localhost",
+    "http://127.0.0.1",
     "http://localhost:8000",
     "https://zion-app-giving.flutterflow.app",
     # Adicione outros domínios conforme necessário
@@ -45,14 +56,14 @@ app = FastAPI(
     root_path='/',
     # dependencies=[Depends(verify_api_key)],
 )
-app.include_router(user.router)
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# app.include_router(user.router)
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=origins,
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
 
 
 @app.get('/ping')
@@ -64,14 +75,14 @@ async def index(message: str):
 
 
 # Register an event for application startup
-@app.on_event("startup")
-async def startup_event():
-    scheduler.start()
+# @app.on_event("startup")
+# async def startup_event():
+#     scheduler.start()
 
 
-@app.on_event("shutdown")
-async def shutdown_event():
-    scheduler.shutdown()
+# @app.on_event("shutdown")
+# async def shutdown_event():
+#     scheduler.shutdown()
 
 
 # Definindo o modelo
@@ -144,19 +155,21 @@ async def profile_user_db(uuid: str) -> List:
     return [x for x in json_list if x['uuid'] == uuid][0]
 
 
-@app.post("/profiles/", response_model=schemas.ProfileResponse)
+@app.post("/profile/user/create", response_model=schemas.ProfileResponse)
 def create_profile(profile: schemas.ProfileCreate,
                    db: Session = Depends(get_db)):
     return crud.create_profile(db=db, profile=profile)
 
-@app.get("/profiles/{profile_uuid}", response_model=schemas.ProfileResponse)
+
+@app.get("/profile/user/{profile_uuid}", response_model=schemas.ProfileResponse)
 def read_profile(profile_uuid: str, db: Session = Depends(get_db)):
     db_profile = crud.get_profile(db, profile_uuid=profile_uuid)
     if db_profile is None:
         raise HTTPException(status_code=404, detail="Profile not found")
     return db_profile
 
-@app.put("/profiles/{profile_uuid}", response_model=schemas.ProfileResponse)
+
+@app.put("/profile/user/{profile_uuid}", response_model=schemas.ProfileResponse)
 def update_profile(profile_uuid: str,
                    profile: schemas.ProfileCreate,
                    db: Session = Depends(get_db)):
@@ -167,7 +180,8 @@ def update_profile(profile_uuid: str,
         raise HTTPException(status_code=404, detail="Profile not found")
     return db_profile
 
-@app.delete("/profiles/{profile_uuid}", response_model=schemas.ProfileResponse)
+
+@app.delete("/profile/user/{profile_uuid}", response_model=schemas.ProfileResponse)
 def delete_profile(profile_uuid: str, db: Session = Depends(get_db)):
     db_profile = crud.delete_profile(db, profile_uuid=profile_uuid)
     if db_profile is None:
@@ -265,6 +279,50 @@ async def journey_list_db():
     return json_list
 
 
+##############################
+# Endpoints para o CRUD
+@app.post("/journey/create", response_model=JourneyCreate)
+def create_journey(journey: JourneyCreate, db: Session = Depends(get_db)):
+
+    return create_journey(db,journey=journey)
+
+
+@app.get("/journey", response_model=List[Journey])
+def read_journey_list(
+    skip: int = 0,
+    limit: int = 10,
+    db: Session = Depends(get_db)
+):
+    '''
+    journey get
+    '''
+    return db.query(Journey).offset(skip).limit(limit).all()
+
+
+@app.get("/journey/{journey_id}", response_model=Journey)
+def read_journey(journey_id: str, db: Session = Depends(get_db)):
+    db_journey = get_journey(db, journey_id)
+    if db_journey is None:
+        raise HTTPException(status_code=404, detail="Profile not found")
+    return db_journey
+
+
+@app.put("/journey/{journey_id}", response_model=Journey)
+def update_profile(journey_id: str, journey: Journey, db: Session = Depends(get_db)):
+    db_journey = update_journey(db, journey_id, journey)
+    if db_journey is None:
+        raise HTTPException(status_code=404, detail="Profile not found")
+
+    return db_journey
+
+@app.delete("/profiles/{profile_id}")
+def delete_profile(journey_id: str, db: Session = Depends(get_db)):
+    db_journey = delete_journey(db, journey_id)
+    if db_journey is None:
+        raise HTTPException(status_code=404, detail="Profile not found")
+
+    return db_journey
+
 # # Definindo o modelo
 # class Uuid(BaseModel):
 #   uuid: str
@@ -343,7 +401,6 @@ async def journey_activities_db(uuid: str):
                 "description":
                 "All have sinned and fall short of the glory of God (Romans 3:23).",
                 "status": "not_started",
-                "title": "God is Creator",
             },
             "quiz": {
                 "title": "God of covenant",
