@@ -315,7 +315,7 @@ def update_profile(journey_id: str, journey: Journey, db: Session = Depends(get_
 
     return db_journey
 
-@app.delete("/profiles/{profile_id}")
+@app.delete("/journey/{profile_id}")
 def delete_profile(journey_id: str, db: Session = Depends(get_db)):
     db_journey = delete_journey(db, journey_id)
     if db_journey is None:
